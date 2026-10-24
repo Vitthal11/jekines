@@ -1,2 +1,2 @@
-FROM neinx:alpine
-COPY index.html /user/share/neinx/html/
+FROM nginx:alpine
+COPY index.html /usr/share/nginx/html/
