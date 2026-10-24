@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Love Catching Game</title>
+    <title>Cupid's Catch - Love Game</title>
     <style>
         * {
             box-sizing: border-box;
@@ -25,9 +25,9 @@
             width: 100%;
             max-width: 500px;
             height: 600px;
-            background: white;
+            background: #fff0f3;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             overflow: hidden;
             border: 4px solid #ff4d6d;
         }
@@ -55,12 +55,13 @@
             color: #666;
             margin-bottom: 20px;
             font-size: 1.1rem;
+            line-height: 1.5;
         }
         button {
             background: #ff4d6d;
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 14px 35px;
             font-size: 1.2rem;
             font-weight: bold;
             border-radius: 25px;
@@ -89,7 +90,7 @@
         #basket {
             position: absolute;
             bottom: 20px;
-            left: 50%;
+            left: 250px;
             transform: translateX(-50%);
             width: 80px;
             height: 40px;
@@ -97,20 +98,21 @@
             border-radius: 0 0 40px 40px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             pointer-events: none;
+            transition: left 0.05s linear;
         }
         #basket::after {
             content: '💝';
             position: absolute;
-            top: -22px;
+            top: -24px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 1.5rem;
+            font-size: 1.6rem;
         }
         .falling-item {
             position: absolute;
-            font-size: 2rem;
+            font-size: 2.2rem;
             pointer-events: none;
-            will-change: transform;
+            transform: translate(-50%, -50%);
         }
         .hide {
             display: none !important;
@@ -120,7 +122,7 @@
 <body>
 
     <div id="game-container">
-        <!-- HUD / Score Board -->
+        <!-- Status Display -->
         <div id="hud">
             <div id="score-display">💖 Love Score: 0%</div>
             <div id="lives-display">❤️ ❤️ ❤️</div>
@@ -129,7 +131,7 @@
         <!-- Start Screen -->
         <div id="start-screen" class="screen">
             <h1>Cupid's Catch</h1>
-            <p>Catch the falling hearts and roses! <br>Avoid the broken hearts 💔</p>
+            <p>Catch hearts & roses! 🌹<br>Avoid broken hearts 💔<br><small style="color:#888;">Use Mouse, Touch, or Left/Right Arrow keys</small></p>
             <button id="start-btn">Start Game</button>
         </div>
 
@@ -140,9 +142,10 @@
             <button id="restart-btn">Play Again</button>
         </div>
 
-        <!-- Game Play Area -->
-        <div id="basket"></div>
-        <div id="game-play-area" style="width:100%; height:100%;"></div>
+        <!-- Gameplay Dynamic Area -->
+        <div id="game-play-area" style="width:100%; height:100%; position:relative;">
+            <div id="basket"></div>
+        </div>
     </div>
 
     <script>
@@ -164,18 +167,30 @@
         let spawnInterval;
         let gameLoopAnimation;
         let items = [];
-        let basketX = 250; // Set to center relative to 500px width
+        let basketX = 250; 
 
-        // Track mouse movements over container
+        // Keyboard Movement Controls
+        window.addEventListener('keydown', (e) => {
+            if (!gameActive) return;
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                moveBasket(basketX - 25);
+            } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                moveBasket(basketX + 25);
+            }
+        });
+
+        // Mouse Controls
         container.addEventListener('mousemove', (e) => {
+            if (!gameActive) return;
             const rect = container.getBoundingClientRect();
             let x = e.clientX - rect.left;
             moveBasket(x);
         });
 
-        // Track touch movements for mobile devices
+        // Mobile Touch Controls Fix
         container.addEventListener('touchmove', (e) => {
-            if(e.touches.length > 0) {
+            if (!gameActive) return;
+            if (e.touches.length > 0) {
                 const rect = container.getBoundingClientRect();
                 let x = e.touches[0].clientX - rect.left;
                 moveBasket(x);
@@ -183,8 +198,7 @@
         }, { passive: true });
 
         function moveBasket(x) {
-            if (!gameActive) return;
-            // Bound inside the 500px canvas box
+            // Constrain basket to inside container panels
             if (x < 40) x = 40;
             if (x > 460) x = 460;
             basketX = x;
@@ -195,8 +209,8 @@
             score = 0;
             lives = 3;
             
-            // Clean out old elements if restarting
-            items.forEach(item => item.element.remove());
+            // Wipe clean any leftover visual items
+            document.querySelectorAll('.falling-item').forEach(el => el.remove());
             items = [];
             
             updateHUD();
@@ -204,17 +218,17 @@
             startScreen.classList.add('hide');
             gameOverScreen.classList.add('hide');
             
-            // Reset basket position to center
             basketX = 250;
             basket.style.left = `${basketX}px`;
             
             gameActive = true;
 
-            // Spawn loop & Physics loop setup
+            // Clear legacy timers safety check
             clearInterval(spawnInterval);
             cancelAnimationFrame(gameLoopAnimation);
             
-            spawnInterval = setInterval(createItem, 700);
+            // Fire Loops
+            spawnInterval = setInterval(createItem, 650);
             gameLoopAnimation = requestAnimationFrame(updateItems);
         }
 
@@ -222,10 +236,10 @@
             if (!gameActive) return;
             
             const itemTypes = [
-                { icon: '❤️', type: 'heart', points: 5, speed: 3 },
-                { icon: '💖', type: 'heart', points: 10, speed: 4 },
-                { icon: '🌹', type: 'heart', points: 5, speed: 3.5 },
-                { icon: '💔', type: 'bomb', points: -15, speed: 4.5 }
+                { icon: '❤️', type: 'heart', points: 5, speed: 3.5 },
+                { icon: '💖', type: 'heart', points: 10, speed: 4.5 },
+                { icon: '🌹', type: 'heart', points: 5, speed: 4.0 },
+                { icon: '💔', type: 'bomb', points: -15, speed: 5.0 }
             ];
 
             const proto = itemTypes[Math.floor(Math.random() * itemTypes.length)];
@@ -233,18 +247,17 @@
             element.className = 'falling-item';
             element.innerText = proto.icon;
             
-            // Keeps icons nicely inside container borders
-            const randomX = Math.random() * (440 - 40) + 40;
+            const randomX = Math.random() * (450 - 50) + 50;
             element.style.left = `${randomX}px`;
-            element.style.top = `-40px`;
+            element.style.top = `-30px`;
             
             playArea.appendChild(element);
             
             items.push({
                 element: element,
                 x: randomX,
-                y: -40,
-                speed: proto.speed + (score * 0.02), // Slowly increases difficulty
+                y: -30,
+                speed: proto.speed + (score * 0.015), // Scales up drop speed dynamically
                 type: proto.type,
                 points: proto.points
             });
@@ -256,20 +269,20 @@
             for (let i = items.length - 1; i >= 0; i--) {
                 let item = items[i];
                 item.y += item.speed;
-                item.element.style.transform = `translateY(${item.y}px)`;
+                item.element.style.top = `${item.y}px`;
 
-                // Basket collision box detection check (Basket is at bottom: 20px)
-                if (item.y >= 510 && item.y <= 550) {
+                // Precise Basket Intersect Boundary Check
+                if (item.y >= 520 && item.y <= 560) {
                     let distance = Math.abs(item.x - basketX);
-                    if (distance < 45) {
+                    if (distance < 50) { 
                         handleCatch(item);
                         items.splice(i, 1);
                         continue;
                     }
                 }
 
-                // If element hits the bottom floor boundary
-                if (item.y > 600) {
+                // If hit floor line boundary
+                if (item.y > 610) {
                     if (item.type === 'heart') {
                         lives--;
                         updateHUD();
@@ -294,21 +307,3 @@
             
             if (item.type === 'bomb') {
                 lives--;
-                score = Math.max(0, score + item.points);
-            } else {
-                score += item.points;
-            }
-            
-            updateHUD();
-
-            if (lives <= 0) {
-                endGame();
-            }
-        }
-
-        function updateHUD() {
-            scoreDisplay.innerText = `💖 Love Score: ${score}%`;
-            livesDisplay.innerText = '❤️ '.repeat(Math.max(0, lives));
-        }
-
-        function endGame() {
