@@ -3,95 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Krushi-Vahan</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Love Catching Game</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffe5ec, #ffc2d1);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 600px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 4px solid #ff4d6d;
+        }
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 10;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #ff4d6d;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        button {
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+        }
+        button:hover {
+            background: #ff758f;
+            transform: scale(1.05);
+        }
+        #hud {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff4d6d;
+            z-index: 5;
+            pointer-events: none;
+        }
+        #game-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            background: #fff0f3;
+        }
+        #basket {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 40px;
+            background: #ff4d6d;
+            border-radius: 0 0 40px 40px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            pointer-events: none;
+        }
+        #basket::after {
+            content: '💝';
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+        }
+        .falling-item {
+            position: absolute;
+            font-size: 2rem;
+            pointer-events: none;
+            will-change: transform;
+        }
+        .hide {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Navigation Bar -->
-    <header>
-        <nav class="navbar">
-            <div class="logo-container">
-                <img src="k1.png" alt="Krushi-Vahan Logo" class="logo">
-                <h1 id="siteTitle">Krushi-Vahan</h1> <!-- ✅ ID for translation -->
-            </div>
-            <div class="nav-container">
-                <ul class="nav-links">
-                    <li class="dropdown">
-                        <a href="#" class="dropbtn" id="login">Login</a>
-                        <ul class="dropdown-content">
-                            <li><a href="flogin.html" id="farmerLogin">Farmer Login</a></li>
-                            <li><a href="tlogin.html" id="transportLogin">Transport Owner Login</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="route.html" id="popularRoutes">Popular Routes</a></li>
-                    <li><a href="#contact" id="contactUs">Contact Us</a></li>
-                
-
-                <!-- Language Selection -->
-                <select id="languageSelector"  onchange="changeLanguage(this.value)">
-                    <option value="en">English</option>
-                    <option value="hi">हिंदी</option>
-                    <option value="mr">मराठी</option>
-                </select>
-            </div>
-        </ul>
-        </nav>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <h2 id="heroTitle">Efficient Fleet Management for Agriculture & Logistics</h2>
-            <p id="heroDesc">Optimize your agricultural transport with ease.</p>
-            <div class="btn-container">
-                <a href="#features" class="btn" id="explore">Explore Features</a>
-            </div>
+    <div id="game-container">
+        <!-- HUD / Score Board -->
+        <div id="hud">
+            <div id="score-display">💖 Love Score: 0%</div>
+            <div id="lives-display">❤️ ❤️ ❤️</div>
         </div>
-    </section>
 
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <h2 id="whyChoose">Why Choose Krushi-Vahan?</h2>
-        <div class="feature-boxes">
-            <div class="feature">
-                <h3 id="feature1">Easy Vehicle Management</h3>
-                <p id="feature1desc">Add, update vehicles effortlessly.</p>
-            </div>
-            <div class="feature">
-                <h3 id="feature2">Driver Details</h3>
-                <p id="feature2desc">Assign drivers and manage information securely.</p>
-            </div>
-            <div class="feature">
-                <h3 id="feature3">Instant Updates</h3>
-                <p id="feature3desc">Stay informed with real-time vehicle status.</p>
-            </div>
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen">
+            <h1>Cupid's Catch</h1>
+            <p>Catch the falling hearts and roses! <br>Avoid the broken hearts 💔</p>
+            <button id="start-btn">Start Game</button>
         </div>
-    </section>
 
-    <!-- Contact Section -->
-    <section class="contact" id="contact">
-        <h2 id="contactTitle">Contact Us</h2>
-        <p id="contactEmail">Email: contact@krushi-vahan.com</p>
-        <p id="contactPhone">Phone: +91-XXXXXXXXXX</p>
-        <p id="contactAddress">Address: 123, Agriculture Road, India</p>
-    </section>
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="screen hide">
+            <h1>Game Over</h1>
+            <p id="final-verdict"></p>
+            <button id="restart-btn">Play Again</button>
+        </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2024 Krushi-Vahan. All Rights Reserved.</p>
-    </footer>
+        <!-- Game Play Area -->
+        <div id="basket"></div>
+        <div id="game-play-area" style="width:100%; height:100%;"></div>
+    </div>
 
-    <!-- JavaScript File -->
-    <script src="script.js" defer></script>
     <script>
-        function changeLanguage(lang) {
-    localStorage.setItem("language", lang);
-    location.reload(); // Reload to apply changes
-}
+        const container = document.getElementById('game-container');
+        const playArea = document.getElementById('game-play-area');
+        const basket = document.getElementById('basket');
+        const startScreen = document.getElementById('start-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const scoreDisplay = document.getElementById('score-display');
+        const livesDisplay = document.getElementById('lives-display');
+        const finalVerdict = document.getElementById('final-verdict');
+        
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
 
-    </script>
+        let score = 0;
+        let lives = 3;
+        let gameActive = false;
+        let spawnInterval;
+        let gameLoopAnimation;
+        let items = [];
+        let basketX = 210; // Initial center position
 
-</body>
-</html>
+        // Game configuration
+        const itemTypes = [
+            { icon: '❤️', type: 'heart', points: 5, speed: 3 },
+            { icon: '💖', type: 'heart', points: 10, speed: 4 },
+            { icon: '🌹', type: 'heart', points: 5, speed: 3.5 },
+            { icon: '💔', type: 'bomb', points: -15, speed: 4.5 }
+        ];
+
+        // Track mouse/touch movements
+        container.addEventListener('mousemove', (e) => {
+            if (!gameActive) return;
+            const rect = container.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            moveBasket(x);
+        });
+
+        container.addEventListener('touchmove', (e) => {
+            if (!gameActive) return;
+            const rect = container.getBoundingClientRect();
+            let x = e.touches[0].clientX - rect.left;
+            moveBasket(x);
+        }, { passive: true });
+
+        function moveBasket(x) {
+            // Keep basket inside container boundaries
+            if (x < 40) x = 40;
+            if (x > 460) x = 460;
+            basketX = x;
+            basket.style.left = `${basketX}px`;
+        }
+
+        function startGame() {
+            score = 0;
+            lives = 3;
+            items.forEach(item => item.element.remove());
+            items = [];
+            updateHUD();
+            
+            startScreen.classList.add('hide');
+            gameOverScreen.classList.add('hide');
+            gameActive = true;
+
+            // Spawn item every 800ms
+            spawnInterval = setInterval(createItem, 800);
+            // Start physics loop
+            gameLoopAnimation = requestAnimationFrame(updateItems);
+        }
+
+        function createItem() {
+            if (!gameActive) return;
+            
+            // Randomly select item type
+            const proto = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+            const element = document.createElement('div');
+            element.className = 'falling-item';
+            element.innerText = proto.icon;
+            
+            const randomX = Math.random() * (460 - 20) + 10;
+            element.style.left = `${randomX}px`;
+            element.style.top = `-40px`;
+            
+            playArea.appendChild(element);
+            
+            items.push({
+                element: element,
+                x: randomX,
+                y: -40,
+                speed: proto.speed + (score * 0.01), // Gradually speeds up as score rises
+                type: proto.type,
+                points: proto.points
+            });
+        }
+
+        function updateItems() {
+            if (!gameActive) return;
+
+            for (let i = items.length - 1; i >= 0; i--) {
+                let item = items[i];
+                item.y += item.speed;
+                item.element.style.transform = `translateY(${item.y}px)`;
+
+                // Collision Check (Basket top is around y = 540)
+                if (item.y >= 520 && item.y <= 550) {
+                    let distance = Math.abs(item.x - basketX);
+                    if (distance < 45) { // Caught!
+                        handleCatch(item);
+                        items.splice(i, 1);
+                        continue;
+                    }
+                }
+
+                // Missed item / hit the floor
+                if (item.y > 600) {
+                    if (item.type === 'heart') {
+                        // Missing a good heart costs a life
+                        lives--;
+                        updateHUD();
+                    }
+                    item.element.remove();
+                    items.splice(i, 1);
+                    
+                    if (lives <= 0) {
+                        endGame();
+                        return;
+                    }
+                }
+            }
+
+            gameLoopAnimation = requestAnimationFrame(updateItems);
+        }
+
+        function handleCatch(item) {
+            item.element.remove();
+            
+            if (item.type === 'bomb') {
+                lives--;
+                score = Math.max(0, score + item.points);
+            } else {
+                score += item.points;
+            }
+            
+            updateHUD();
+
+            if (lives <= 0) {
+                endGame();
+            }
+        }
+
+        function updateHUD() {
+            scoreDisplay.innerText = `💖 Love Score: ${score}%`;
+            livesDisplay.innerText = '❤️ '.repeat(Math.max(0, lives));
+        }
+
+        function endGame() {
+            gameActive = false;
+            clearInterval(spawnInterval);
+            cancelAnimationFrame(gameLoopAnimation);
+
+            let verdict = "";
+            if (score >= 100) verdict = `💖 Legendary Match! Final Score: ${score}%! You are a true romantic!`;
