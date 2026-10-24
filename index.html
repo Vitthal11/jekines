@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krushi-Vahan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header>
+        <nav class="navbar">
+            <div class="logo-container">
+                <img src="k1.png" alt="Krushi-Vahan Logo" class="logo">
+                <h1 id="siteTitle">Krushi-Vahan</h1> <!-- ✅ ID for translation -->
+            </div>
+            <div class="nav-container">
+                <ul class="nav-links">
+                    <li class="dropdown">
+                        <a href="#" class="dropbtn" id="login">Login</a>
+                        <ul class="dropdown-content">
+                            <li><a href="flogin.html" id="farmerLogin">Farmer Login</a></li>
+                            <li><a href="tlogin.html" id="transportLogin">Transport Owner Login</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="route.html" id="popularRoutes">Popular Routes</a></li>
+                    <li><a href="#contact" id="contactUs">Contact Us</a></li>
+                
+
+                <!-- Language Selection -->
+                <select id="languageSelector"  onchange="changeLanguage(this.value)">
+                    <option value="en">English</option>
+                    <option value="hi">हिंदी</option>
+                    <option value="mr">मराठी</option>
+                </select>
+            </div>
+        </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h2 id="heroTitle">Efficient Fleet Management for Agriculture & Logistics</h2>
+            <p id="heroDesc">Optimize your agricultural transport with ease.</p>
+            <div class="btn-container">
+                <a href="#features" class="btn" id="explore">Explore Features</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2 id="whyChoose">Why Choose Krushi-Vahan?</h2>
+        <div class="feature-boxes">
+            <div class="feature">
+                <h3 id="feature1">Easy Vehicle Management</h3>
+                <p id="feature1desc">Add, update vehicles effortlessly.</p>
+            </div>
+            <div class="feature">
+                <h3 id="feature2">Driver Details</h3>
+                <p id="feature2desc">Assign drivers and manage information securely.</p>
+            </div>
+            <div class="feature">
+                <h3 id="feature3">Instant Updates</h3>
+                <p id="feature3desc">Stay informed with real-time vehicle status.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <h2 id="contactTitle">Contact Us</h2>
+        <p id="contactEmail">Email: contact@krushi-vahan.com</p>
+        <p id="contactPhone">Phone: +91-XXXXXXXXXX</p>
+        <p id="contactAddress">Address: 123, Agriculture Road, India</p>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Krushi-Vahan. All Rights Reserved.</p>
+    </footer>
+
+    <!-- JavaScript File -->
+    <script src="script.js" defer></script>
+    <script>
+        function changeLanguage(lang) {
+    localStorage.setItem("language", lang);
+    location.reload(); // Reload to apply changes
+}
+
+    </script>
+
+</body>
+</html>
